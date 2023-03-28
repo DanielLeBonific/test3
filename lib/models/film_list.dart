@@ -39,9 +39,6 @@ class _FilmListState extends State<FilmList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Star Wars Films'),
-      ),
       body: SafeArea(
         child: Column(
           children: [

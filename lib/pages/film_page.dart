@@ -13,6 +13,7 @@ class FilmPage extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -82,6 +83,7 @@ class FilmPage extends StatelessWidget {
               style: TextStyle(fontSize: 18),
             ),
           ],
+        ),
         ),
       ),
     );
