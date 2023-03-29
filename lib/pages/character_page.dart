@@ -13,6 +13,7 @@ class CharacterPage extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -29,7 +30,7 @@ class CharacterPage extends StatelessWidget {
             SizedBox(height: 8),
             Text(
               'Gender: ${character['gender'] ?? 'Unknown'}',
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 28),
             ),
             SizedBox(height: 8),
             Text(
@@ -98,6 +99,7 @@ class CharacterPage extends StatelessWidget {
             ),
           ],
         ),
+    ),
       ),
     );
   }

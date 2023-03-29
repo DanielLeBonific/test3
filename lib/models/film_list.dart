@@ -2,125 +2,95 @@ import 'package:flutter/material.dart';
 import 'package:test3/models/api.dart';
 import 'package:test3/pages/film_page.dart';
 
+import 'film.dart';
+
 class FilmList extends StatefulWidget {
   @override
-  _FilmListState createState() => _FilmListState();
+  _filmListState createState() => _filmListState();
 }
 
-class _FilmListState extends State<FilmList> {
-  List<dynamic> _films = [];
-  bool _isLoading = false;
+class _filmListState extends State<FilmList> {
+  List<Film> _films = [];
 
   @override
-  void initState() {
+  void initState() { // получение списка из API
     super.initState();
     _loadFilms();
   }
 
   Future<void> _loadFilms() async {
-    setState(() {
-      _isLoading = true;
-    });
-
     try {
-      final films = await Api.getFilms();
+      final List<Film> films = await Api.getFilms();
       setState(() {
-        _films = films;
-        _isLoading = false;
-      });
+        _films.addAll(films);;
+      });  //Если получение данных проходит успешно, то в переменную films сохраняются данные,
+      // а затем с помощью setState() обновляется значение _films, которое содержит список персонажей,
+      // и значение _isLoading устанавливается в false
+
     } catch (e) {
       setState(() {
-        _isLoading = false;
       });
-      print('Error loading films: $e');
+      print('Error loading films: $e'); //Если получение данных из API не удалось по какой-то причине
+      // то в блоке catch устанавливает
+      // значение _isLoading в false, что означает что загрузка закончилась,
+      // и выводится сообщение об ошибке в консоль
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
+    return Scaffold( // основной элемент пользовательского интерфейса,
+      // который предоставляет структуру для построения страницы
+      body: SafeArea( //гарантирует  что содержимое не будет перекрываться системными элементами,
+        // такими как панель уведомлений или кнопки управления приложением
         child: Column(
           children: [
-            Expanded(
-              child: _isLoading
-                  ? Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : GridView.builder(
-                      padding: EdgeInsets.all(10),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 2 / 3,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                      ),
-                      itemCount: _films.length,
-                      itemBuilder: (context, index) {
-                        final film = _films[index];
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => FilmPage(film: film),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey,
-                                  blurRadius: 5,
-                                  offset: Offset(2, 2),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Padding(
-                                    padding: EdgeInsets.all(10),
-                                    child: Text(
-                                      film['title'],
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  height: 50,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[300],
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(10),
-                                      bottomRight: Radius.circular(10),
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      film['release_date'],
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+            Expanded( //растягивает своего родителя на всю доступную высоту экрана
+              child: GridView.builder( //отвечает за отображение списка персонажей в виде сетки
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount( //для определения количества столбцов и соотношения высоты и ширины каждого элемента
+                  crossAxisCount: 2,
+                  childAspectRatio: 3/4,
+                ),
+                itemCount: _films.length, //устанавливается равным количеству персонажей в списке _characters
+                itemBuilder: (context, index) { //отвечает за построение каждого элемента в сетке
+                  final film = _films[index];
+                  return GestureDetector( //при нажатии на карточку перенаправляет пользователя на страницу с
+                    // передачей выбранного персонажа в качестве аргумента
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              FilmPage(film: film),
+                        ),
+                      );
+                    },
+                    child: Card(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded( //занимает всю доступную высоту Card и содержит прямоугольный контейнер с серым фоном
+                            child: Container(
+                              color: Colors
+                                  .grey[400], // заменить на цвет по умолчанию
                             ),
                           ),
-                        );
-                      },
+                          Padding( //отвечает за отображение имени персонажа под прямоугольным контейнером
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              film.title??'unknown',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
+                  );
+                },
+              ),
             ),
           ],
         ),
